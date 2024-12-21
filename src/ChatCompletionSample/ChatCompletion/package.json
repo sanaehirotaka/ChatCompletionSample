@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "0.0.0",
+  "description": "app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "loadDependency": "node vendor_bundle/copyDependency.js",
+    "build": "npm run loadDependency",
+    "postbuild": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "bootstrap": "^5.3.3",
+    "jquery": "3.7.1",
+    "marked": "14.1.2"
+  },
+  "devDependencies": {
+    "fs-extra": "^10.1.0",
+    "package-json": "^8.1.0"
+  }
+}
