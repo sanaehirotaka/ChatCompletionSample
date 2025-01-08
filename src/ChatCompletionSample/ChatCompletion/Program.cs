@@ -35,4 +35,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT");
+string? url = null;
+if (port != null)
+{
+    url = $"http://0.0.0.0:{port}";
+}
+app.Run(url);
