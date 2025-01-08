@@ -5,9 +5,9 @@ VisualStudioVersion = 17.10.35431.56
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatCompletion", "ChatCompletion\ChatCompletion.csproj", "{89C460DD-36C9-4352-8DF7-59851F53D130}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{CE709ECB-82EF-4AB0-8EAB-900BFB2046F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "Lib\Lib.csproj", "{CE709ECB-82EF-4AB0-8EAB-900BFB2046F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelLib", "SemanticKernelLib\SemanticKernelLib.csproj", "{CE998182-52B6-483E-B850-3D2BA2F357B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernelLib", "SemanticKernelLib\SemanticKernelLib.csproj", "{CE998182-52B6-483E-B850-3D2BA2F357B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

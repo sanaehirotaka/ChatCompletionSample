@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using ChatCompletion.Lib.Injection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace ChatCompletion.Lib.Injection;
+namespace ChatCompletion.Lib.Extensions;
 
 public static class AutoConfigExtensions
 {
@@ -12,9 +12,9 @@ public static class AutoConfigExtensions
         {
             if (type.GetCustomAttribute(typeof(InjectionTargetsAttribute), true) is InjectionTargetsAttribute attribute)
             {
-                var serviceType = type;
-                var implType = ((IList<Type>)[.. type.GetInterfaces(), type.BaseType!, type]).First(type => type.GetCustomAttribute(typeof(InjectionTargetsAttribute)) != null);
-                services.Replace(new(serviceType, implType, attribute.ServiceLifetime));
+                var implType = type;
+                var serviceType = ((IList<Type>)[.. type.GetInterfaces(), type.BaseType!, type]).First(type => type.GetCustomAttribute(typeof(InjectionTargetsAttribute)) != null);
+                services.Add(new(serviceType, implType, attribute.ServiceLifetime));
             }
         }
         return services;

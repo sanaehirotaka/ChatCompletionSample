@@ -1,22 +1,149 @@
-html {
-  font-size: 14px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+code, pre {
+    font-family: var(--bs-font-monospace);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+dialog {
+    border-radius: var(--bs-border-radius);
+    border: 0;
+    padding: 0;
 }
 
-body {
-  margin-bottom: 60px;
+#right {
+    opacity: 0;
+    animation: 1s fadeIn forwards;
+}
+
+.message-container {
+    opacity: 0;
+    animation: 1s fadeIn forwards;
+}
+
+code.hljs {
+    font-size: 0.8rem;
+    padding: 0.1rem !important;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+    max-height: 25rem;
+    overflow: auto !important;
+}
+
+    code.hljs table.hljs-ln {
+        width: 100%;
+    }
+
+    code.hljs .hljs-ln-numbers {
+        width: 0;
+        white-space: nowrap;
+        color: gray;
+        padding-right: 1rem;
+    }
+
+    code.hljs tr:hover .hljs-ln-numbers {
+        color: rgba(var(--bs-body-color-rgb));
+    }
+
+    code.hljs tr:hover {
+        background-color: rgba(var(--bs-body-bg-rgb), 0.1);
+    }
+
+.hljs-copy-button {
+    background-color: rgba(var(--bs-secondary-rgb)) !important;
+}
+
+.assistant-prompt:target .card {
+    --bs-focus-ring-color: rgba(var(--bs-success-rgb), var(--bs-focus-ring-opacity));
+}
+
+.user-prompt:target .card {
+    --bs-focus-ring-color: rgba(var(--bs-primary-rgb), var(--bs-focus-ring-opacity));
+}
+
+:target .card {
+    box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
+}
+
+#title {
+    font-size: 2.5rem;
+    font-weight: 500;
+}
+
+.header-title button,
+.card-header button {
+    border: none;
+}
+
+.edit:hover, .edit.active {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-primary-rgb),var(--bs-bg-opacity)) !important;
+}
+
+
+.trash:hover {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-danger-rgb),var(--bs-bg-opacity)) !important;
+}
+
+.message-body[contenteditable] {
+    white-space: pre-line;
+}
+
+.message-body p {
+    margin: 0;
+}
+
+.message-images:not(:has(img)) {
+    display: none !important;
+    visibility: hidden;
+}
+
+.message-images img {
+    max-width: 256px;
+    max-height: 128px;
+    margin: 0.25rem;
+}
+
+.message-header .model {
+    font-weight: normal;
+}
+
+.message-header .responseTime {
+    color: gray;
+    font-size: 0.75em;
+    font-weight: normal;
+}
+
+.collapsed .fa-solid.fa-caret-up:before {
+    content: "\f0d7";
+}
+
+#postArea {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(rgba(0,0,0,0), var(--bs-body-bg) 0.75rem, var(--bs-body-bg));
+    padding: 1rem 0 0 0;
+}
+#postArea.dragover {
+    outline: 4px dashed #ccc;
+}
+
+#drop-message {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }

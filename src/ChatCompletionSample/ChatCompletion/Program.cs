@@ -1,8 +1,12 @@
+using ChatCompletion.SemanticKernelLib.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
     .AddSwaggerGen()
+    .AddRouting(opt => opt.LowercaseUrls = true)
+    .RegistorServices()
     .AddMvc()
     .AddSessionStateTempDataProvider();
 

@@ -1,0 +1,74 @@
+﻿<template id="templateSystem">
+    <li class="d-flex justify-content-between align-items-center mb-2 message-container system-prompt">
+        <i class="fa-solid fa-gears d-flex align-self-start me-3 shadow-1-strong" style="font-size: 2rem;"></i>
+        <div class="card w-100">
+            <div class="card-header p-2 d-flex justify-content-between align-items-center message-header">
+                <div class="fw-bold">System</div>
+                <div>
+                    <button type="button" data-bs-toggle="button" class="btn btn-outline-secondary p-1 edit message-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+            </div>
+            <div class="card-body p-2">
+                <p class="mb-0 message-body">Hello</p>
+            </div>
+        </div>
+    </li>
+</template>
+<template id="templateAssistant">
+    <li class="mb-2 message-container assistant-prompt">
+        <div class="card w-100">
+            <div class="card-header p-2 d-flex justify-content-between align-items-center message-header">
+                <div class="fw-bold">アシスタント</div>
+                <div>
+                    <small class="model"></small><small class="responseTime"></small>
+                    <button type="button" data-bs-toggle="button" class="btn btn-outline-secondary p-1 edit message-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button type="button" class="btn btn-outline-secondary p-1 edit message-regenerate"><i class="fa-solid fa-rotate"></i></button>
+                    <button type="button" class="btn btn-outline-secondary p-1 trash message-trash"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+            <div class="card-body p-2">
+                <p class="mb-0 message-body">Hello</p>
+            </div>
+        </div>
+    </li>
+</template>
+<template id="templateUser">
+    <li class="d-flex justify-content-between align-items-center mb-2 message-container user-prompt">
+        <i class="fa-solid fa-user d-flex align-self-start me-3 shadow-1-strong" style="font-size: 2rem;"></i>
+        <div class="card w-100">
+            <div class="card-header p-2 d-flex justify-content-between align-items-center message-header">
+                <div class="fw-bold">自分</div>
+                <div>
+                    <button type="button" data-bs-toggle="button" class="btn btn-outline-secondary p-1 edit message-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button type="button" class="btn btn-outline-secondary p-1 trash message-trash"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+            <div class="card-body p-2">
+                <p class="mb-0 message-body">Hello</p>
+            </div>
+            <p class="mb-0 message-images"></p>
+        </div>
+    </li>
+</template>
+<template id="addedFile">
+    <li class="mb-2 added-file">
+        <div class="card">
+            <div class="card-header p-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <button type="button" class="btn p-1 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                        <i class="fa-solid fa-caret-up"></i>
+                        <span class="fw-bold file-name">hello.js</span>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary p-1 trash file-trash">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-2 collapse">
+                <p class="mb-0 file-body">Hello</p>
+            </div>
+        </div>
+    </li>
+</template>
