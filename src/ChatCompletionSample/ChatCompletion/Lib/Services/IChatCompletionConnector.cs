@@ -1,7 +1,7 @@
 ﻿using ChatCompletion.Lib.Injection;
 using Microsoft.SemanticKernel;
 
-namespace ChatCompletion.SemanticKernelLib.Services;
+namespace ChatCompletion.Lib.Services;
 
 [Scoped]
 public interface IChatCompletionConnector

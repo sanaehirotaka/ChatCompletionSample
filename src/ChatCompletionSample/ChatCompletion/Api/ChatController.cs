@@ -1,7 +1,7 @@
-﻿using ChatCompletion.Plugins;
-using ChatCompletion.SemanticKernelLib.Extensions;
-using ChatCompletion.SemanticKernelLib.Model;
-using ChatCompletion.SemanticKernelLib.Services;
+﻿using ChatCompletion.Lib.Extensions;
+using ChatCompletion.Lib.Model;
+using ChatCompletion.Lib.Services;
+using ChatCompletion.Plugins;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -15,11 +15,11 @@ namespace ChatCompletion.Api;
 [Produces("application/json")]
 public class ChatController : ControllerBase
 {
-    private readonly MemoryService memoryService;
+    private readonly IMemoryService memoryService;
 
     private readonly IList<IChatCompletionConnector> chatCompletionConnectors;
 
-    public ChatController(MemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
+    public ChatController(GCSMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
     {
         this.memoryService = memoryService;
         this.chatCompletionConnectors = chatCompletionConnectors.ToList();

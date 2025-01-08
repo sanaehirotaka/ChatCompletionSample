@@ -1,10 +1,10 @@
 ﻿using ChatCompletion.Lib.Injection;
-using ChatCompletion.SemanticKernelLib.Options;
+using ChatCompletion.Lib.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Google;
-using static ChatCompletion.SemanticKernelLib.Options.ClientOptions;
+using static ChatCompletion.Lib.Options.ClientOptions;
 
-namespace ChatCompletion.SemanticKernelLib.Services;
+namespace ChatCompletion.Lib.Services;
 
 [Singleton]
 public class GeminiKernel : IChatCompletionConnector

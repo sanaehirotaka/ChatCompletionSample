@@ -1,12 +1,8 @@
-﻿using ChatCompletion.SemanticKernelLib.Model;
+﻿using ChatCompletion.Lib.Model;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using System.IO;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 
-namespace ChatCompletion.SemanticKernelLib.Extensions;
+namespace ChatCompletion.Lib.Extensions;
 
 public static class MemoryModelExtensions
 {

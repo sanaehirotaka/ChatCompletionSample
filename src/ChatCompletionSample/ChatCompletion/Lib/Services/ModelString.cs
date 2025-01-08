@@ -1,4 +1,4 @@
-﻿namespace ChatCompletion.SemanticKernelLib.Services;
+﻿namespace ChatCompletion.Lib.Services;
 
 public class ModelString
 {

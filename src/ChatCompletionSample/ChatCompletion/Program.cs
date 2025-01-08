@@ -1,4 +1,4 @@
-using ChatCompletion.SemanticKernelLib.Extensions;
+using ChatCompletion.Lib.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

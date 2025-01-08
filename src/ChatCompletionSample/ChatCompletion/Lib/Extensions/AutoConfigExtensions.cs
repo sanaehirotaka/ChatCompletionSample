@@ -1,5 +1,4 @@
 ﻿using ChatCompletion.Lib.Injection;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace ChatCompletion.Lib.Extensions;

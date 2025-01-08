@@ -1,8 +1,7 @@
 ﻿using ChatCompletion.Lib.Injection;
-using Microsoft.Extensions.Configuration;
-using static ChatCompletion.SemanticKernelLib.Options.ClientOptions;
+using static ChatCompletion.Lib.Options.ClientOptions;
 
-namespace ChatCompletion.SemanticKernelLib.Options;
+namespace ChatCompletion.Lib.Options;
 
 [Singleton]
 public class ClientOptions : List<ClientOption>

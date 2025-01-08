@@ -1,15 +1,14 @@
-using ChatCompletion.SemanticKernelLib.Model;
-using ChatCompletion.SemanticKernelLib.Services;
+using ChatCompletion.Lib.Model;
+using ChatCompletion.Lib.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 
 namespace ChatCompletion.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly MemoryService memoryService;
+    private readonly IMemoryService memoryService;
 
     private readonly IList<IChatCompletionConnector> chatCompletionConnectors;
 
@@ -19,7 +18,7 @@ public class IndexModel : PageModel
 
     public MemoryModel Chat { get; private set; } = default!;
 
-    public IndexModel(MemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
+    public IndexModel(GCSMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
     {
         this.memoryService = memoryService;
         this.chatCompletionConnectors = chatCompletionConnectors.ToList();
