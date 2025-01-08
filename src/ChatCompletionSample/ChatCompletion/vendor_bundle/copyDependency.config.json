@@ -1,0 +1,58 @@
+{
+    "srcDir": "./node_modules/",
+    "distDir": "./wwwroot/lib/",
+    "libPath": "lib/",
+    "mode": "development",
+    "ignorePkg": [ "install", "npm" ],
+    "loadCshtmlFileNm": "./Pages/Shared/_Modules.cshtml",
+    "const": {
+        "bootstrap": {
+            "js": {
+                "development": [ "js/bootstrap.bundle.min.js" ],
+                "other": [ "js/bootstrap.bundle.min.js" ]
+            },
+            "css": {
+                "development": [ "css/bootstrap.min.css" ],
+                "other": [ "css/bootstrap.min.css" ]
+            }
+        },
+        "jquery": {
+            "js": {
+                "development": [ "jquery.min.js" ],
+                "other": [ "jquery.min.js" ]
+            },
+            "css": {
+                "development": [],
+                "other": []
+            }
+        },
+        "fontawesome-free": {
+            "js": {
+                "development": [],
+                "other": []
+            },
+            "css": {
+                "development": [ "css/all.min.css" ],
+                "other": [ "css/all.min.css" ]
+            }
+        },
+        "marked": {
+            "js": {
+                "development": [ "marked.min.js" ],
+                "other": [ "marked.min.js" ]
+            }
+        }
+    },
+    "fixed": {
+        "@fortawesome/fontawesome-free": {
+            "from": "@fortawesome/fontawesome-free",
+            "to": "fontawesome-free"
+        }
+    },
+    "priorityPkg": [
+        "@fortawesome/fontawesome-free",
+        "jquery",
+        "bootstrap",
+        "marked"
+    ]
+}

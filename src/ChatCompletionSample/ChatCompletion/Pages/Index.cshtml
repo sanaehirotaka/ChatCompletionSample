@@ -1,0 +1,163 @@
+﻿@page
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@model IndexModel
+@{
+    ViewData["Title"] = "無題のチャット";
+    var requestToken = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+@section Scripts
+{
+    <script>
+        const requestToken = "@(requestToken)";
+        const ai = {
+            "id": "@(Model.Id)",
+            "chat": null
+        };
+    </script>
+    <script src="~/Pages/Index.cshtml.js" defer asp-append-version="true"></script>
+}
+<partial name="~/Pages/Shared/_Template.cshtml" />
+<section>
+    <div class="row">
+        <div class="col-md-5 col-lg-4 col-xl-3 mb-2" id="left">
+            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                <div class="hstack">
+                    <i class="fa-regular fa-comments pe-none me-2" style="font-size: 2rem; color: dodgerblue"></i>
+                    <strong class="fs-5">チャット</strong>
+                </div>
+                <div class="hstack">
+                    <a href="@(Url.ActionLink("Index"))"><strong class="mb-1">新しい話題を始める</strong></a>
+                </div>
+            </div>
+            <div class="list-group list-group-flush border-bottom">
+                @foreach (var chat in Model.Chats)
+                {
+                    @if (Model.Id == chat.ThreadId)
+                    {
+                        <a href="#" class="list-group-item list-group-item-action active">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1 text-truncate chat-title">@(chat.Title ?? "無題のチャット")</strong>
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@(Url.Action("Index", new RouteValueDictionary() { { "id", chat.ThreadId } }))" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1 text-truncate">@(chat.Title ?? "無題のチャット")</strong>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-md-7 col-lg-8 col-xl-9" id="right">
+            <div class="d-flex justify-content-between align-items-center header-title">
+                <div>
+                    <h1 id="title">
+                        無題のチャット
+                    </h1>
+                </div>
+                <div class="hstack">
+                    <button type="button" data-bs-toggle="button" class="btn btn-outline-secondary p-1 edit" id="editTitle" title="タイトルの編集"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button type="button" class="btn btn-outline-secondary p-1 edit" id="generateTitle" title="新しいタイトル"><i class="fa-solid fa-rotate"></i></button>
+                    <div class="vr m-2"></div>
+                    <button type="button" class="btn btn-outline-secondary p-1 trash" id="deleteThread" title="スレッドの削除"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+            <ul class="list-unstyled" id="messages">
+            </ul>
+            <div id="postArea">
+                <div class="pb-2">
+                    <div class="input-group">
+                        <textarea class="form-control" id="newPrompt" rows="4" autofocus></textarea>
+                        <button type="button" class="btn btn-outline-primary" id="send">
+                            <i class="fa-regular fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div style="position: absolute; top: -2rem; width: 100%;" id="loading" hidden>
+                        <div class="alert alert-info" style="width: 15rem; margin: 0 auto;">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            応答を待っています...
+                        </div>
+                    </div>
+                </div>
+                <div class="pb-2">
+                    <button class="btn btn-outline-secondary" id="addCodeBlockButton">
+                        ファイルを追加
+                    </button>
+                    <small>※テキスト形式もしくは画像</small>
+                    <input type="file" id="addCodeBlock" multiple hidden />
+                </div>
+                <ul class="list-unstyled" id="addedFiles">
+                </ul>
+                <div class="mb-0 message-images d-flex justify-content-between align-items-start">
+                    <div id="addedImages">
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary p-1 trash" id="deleteImages"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+                <div id="drop-message" class="row m-0 align-items-center" hidden>
+                    <div class="col fs-3 text-center">
+                        ファイルをここにドラッグ＆ドロップ
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-5">
+                    <div class="input-group">
+                        <span class="input-group-text">利用モデル</span>
+                        <select class="form-select" id="selectModel" asp-items="Model.GetModelsSelectListItem()"></select>
+                    </div>
+                </div>
+                <div class="col">
+                    <a href="#" id="addSystemPrompt">システムプロンプトを追加する</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<dialog id="errorDialog">
+    <form method="dialog">
+        <div class="toast show">
+            <div class="toast-body">
+                <div class="mb-2">
+                    <label for="errorMessage" class="form-label">予期しないエラーが発生しました。</label>
+                    <textarea class="form-control" rows="4" id="errorMessage" autofocus></textarea>
+                </div>
+                <div class="mt-2 pt-2 border-top">
+                    <button type="submit" value="yes" class="btn btn-primary btn-sm">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</dialog>
+<dialog id="deleteThreadDialog">
+    <form method="dialog">
+        <div class="toast show">
+            <div class="toast-body">
+                このスレッドを削除しますか？
+                <div class="mt-2 pt-2 border-top">
+                    <button type="submit" value="yes" class="btn btn-primary btn-sm">はい</button>
+                    <button type="submit" value="no" class="btn btn-secondary btn-sm">いいえ</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</dialog>
+<dialog id="addSystemPromptDialog">
+    <form method="dialog">
+        <div class="toast show">
+            <div class="toast-body">
+                <div class="mb-2">
+                    <label for="systemPrompt" class="form-label">システムプロンプトを追加</label>
+                    <textarea class="form-control" rows="4" id="systemPrompt" autofocus></textarea>
+                </div>
+                <div class="mt-2 pt-2 border-top">
+                    <button type="submit" value="yes" class="btn btn-primary btn-sm">追加</button>
+                    <button type="submit" value="no" class="btn btn-secondary btn-sm">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</dialog>
