@@ -1,6 +1,7 @@
 ﻿using ChatCompletion.Lib.Injection;
 using ChatCompletion.Lib.Model;
 using ChatCompletion.Lib.Options;
+using Google.Api.Gax;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using System.IO.Compression;
@@ -40,7 +41,8 @@ public class GCSMemoryService : IMemoryService
     public GCSMemoryService(GCSOptions options)
     {
         _options = options;
-        _client = StorageClient.Create(GoogleCredential.FromFile(options.CredentialPath));
+        using var stream = typeof(GCSMemoryService).Assembly.GetManifestResourceStream(options.CredentialPath);
+        _client = StorageClient.Create(GoogleCredential.FromStream(stream));
     }
 
     /// <summary>
