@@ -41,7 +41,7 @@ public class GCSMemoryService : IMemoryService
     public GCSMemoryService(GCSOptions options)
     {
         _options = options;
-        if (options.CredentialPath != null)
+        if (!string.IsNullOrEmpty(options.CredentialPath))
         {
             _client = StorageClient.Create(GoogleCredential.FromFile(options.CredentialPath));
         }
