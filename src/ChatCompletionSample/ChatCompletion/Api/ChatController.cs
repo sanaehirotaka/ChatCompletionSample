@@ -49,7 +49,7 @@ public class ChatController : ControllerBase
                 // FinishReason == stop になるまで繰り返す
                 while (!completions.Any(m => "stop" == m?.Metadata?["FinishReason"]?.ToString()?.ToLower()))
                 {
-                    var completion = await chatCompletionService.GetChatMessageContentsAsync(history, setting);
+                    var completion = await chatCompletionService.GetChatMessageContentsAsync(history, setting, kernel);
                     history.AddRange(completion);
                     completions.AddRange(completion);
                 }
@@ -86,6 +86,7 @@ public class ChatController : ControllerBase
     {
         var (usingModel, chatCompletion) = DetectUsingModel(chatMessages);
         var kernel = chatCompletion.CreateKernel(usingModel.ModelName);
+        var setting = chatCompletion.GetPromptExecutionSettings();
 
         kernel.Plugins.AddFromType<GenerateTitlePlugin>();
         var chat = kernel.GetRequiredService<IChatCompletionService>();
@@ -96,10 +97,7 @@ public class ChatController : ControllerBase
             history.AddUserMessage("このやり取りからタイトルとして適切な2-5単語の簡潔な説明を1つだけ書いてください");
             try
             {
-                var completion = await chat.GetChatMessageContentsAsync(history, new PromptExecutionSettings()
-                {
-                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-                }, kernel);
+                var completion = await chat.GetChatMessageContentsAsync(history, setting, kernel);
                 history.AddRange(completion);
                 var title = history.LastOrDefault(p => p.Role == AuthorRole.Tool)?.Content?.Trim();
                 var content = completion[completion.Count - 1].Content?.Trim() ?? "";

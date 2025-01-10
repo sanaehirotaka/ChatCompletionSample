@@ -31,8 +31,8 @@ public class GeminiKernel : IChatCompletionConnector
     {
 #pragma warning disable SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
         return Kernel.CreateBuilder()
-            .AddGoogleAIGeminiChatCompletion(model, ClientOption.Credential)
-            .Build();
+            .AddGoogleAIGeminiChatCompletion(model, ClientOption.Credential);
+        builder.Plugins.Add(KernelPluginFactory.CreateFromType<ToolPlugin>());
 #pragma warning restore SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
     }
 
@@ -57,6 +57,7 @@ public class GeminiKernel : IChatCompletionConnector
         }
         return new GeminiPromptExecutionSettings()
         {
+            ToolCallBehavior = GeminiToolCallBehavior.AutoInvokeKernelFunctions,
             SafetySettings = [
                 // ハラスメント
                 new(GeminiSafetyCategory.Harassment, threshold),
