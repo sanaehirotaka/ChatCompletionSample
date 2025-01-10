@@ -41,8 +41,14 @@ public class GCSMemoryService : IMemoryService
     public GCSMemoryService(GCSOptions options)
     {
         _options = options;
-        using var stream = typeof(GCSMemoryService).Assembly.GetManifestResourceStream(options.CredentialPath);
-        _client = StorageClient.Create(GoogleCredential.FromStream(stream));
+        if (options.CredentialPath != null)
+        {
+            _client = StorageClient.Create(GoogleCredential.FromFile(options.CredentialPath));
+        }
+        else
+        {
+            _client = StorageClient.Create(GoogleCredential.GetApplicationDefault());
+        }
     }
 
     /// <summary>
