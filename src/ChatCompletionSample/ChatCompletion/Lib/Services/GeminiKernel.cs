@@ -32,9 +32,9 @@ public class GeminiKernel : IChatCompletionConnector
     public Kernel CreateKernel(string model)
     {
 #pragma warning disable SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
-        return Kernel.CreateBuilder()
+        var builder = Kernel.CreateBuilder()
             .AddGoogleAIGeminiChatCompletion(model, ClientOption.Credential);
-        builder.Plugins.Add(KernelPluginFactory.CreateFromType<ToolPlugin>());
+        return builder.Build();
 #pragma warning restore SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
     }
 

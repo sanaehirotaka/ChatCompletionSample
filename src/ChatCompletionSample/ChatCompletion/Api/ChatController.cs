@@ -88,7 +88,7 @@ public class ChatController : ControllerBase
         var kernel = chatCompletion.CreateKernel(usingModel.ModelName);
         var setting = chatCompletion.GetPromptExecutionSettings();
 
-        kernel.Plugins.AddFromType<GenerateTitlePlugin>();
+        kernel.Plugins.Add(KernelPluginFactory.CreateFromType<GenerateTitlePlugin>());
         var chat = kernel.GetRequiredService<IChatCompletionService>();
         Exception? exception = null;
         for (var i = 0; i < 3; i++)
