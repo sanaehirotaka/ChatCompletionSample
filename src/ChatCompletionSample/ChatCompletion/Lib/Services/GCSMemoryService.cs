@@ -283,9 +283,21 @@ public class GCSMemoryService : IMemoryService
         {
             return null;
         }
-        var memoryStream = new MemoryStream();
-        await _client.DownloadObjectAsync(@object, memoryStream); // GCSからストリームをダウンロード
-        memoryStream.Position = 0; // ストリームの位置を先頭に戻す
-        return memoryStream;
+        Exception? exception = null;
+        for (var i = 0; i < 3; i++)
+        {
+            try
+            {
+                var memoryStream = new MemoryStream();
+                await _client.DownloadObjectAsync(@object, memoryStream); // GCSからストリームをダウンロード
+                memoryStream.Position = 0; // ストリームの位置を先頭に戻す
+                return memoryStream;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+        }
+        throw exception!;
     }
 }
