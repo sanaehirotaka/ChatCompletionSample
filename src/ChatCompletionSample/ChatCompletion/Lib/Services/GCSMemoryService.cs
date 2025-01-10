@@ -41,13 +41,13 @@ public class GCSMemoryService : IMemoryService
     public GCSMemoryService(GCSOptions options)
     {
         _options = options;
-        if (!string.IsNullOrEmpty(options.CredentialPath))
+        if (string.IsNullOrEmpty(options.CredentialPath))
         {
-            _client = StorageClient.Create(GoogleCredential.FromFile(options.CredentialPath));
+            _client = StorageClient.Create(GoogleCredential.GetApplicationDefault());
         }
         else
         {
-            _client = StorageClient.Create(GoogleCredential.GetApplicationDefault());
+            _client = StorageClient.Create(GoogleCredential.FromFile(options.CredentialPath));
         }
     }
 

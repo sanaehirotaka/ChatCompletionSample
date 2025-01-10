@@ -5,7 +5,7 @@ namespace ChatCompletion.Lib.Options;
 [Singleton]
 public class GCSOptions
 {
-    public string? CredentialPath { get; init; } = default!;
+    public string? CredentialPath { get; init; }
 
     public string Bucket { get; init; } = default!;
 
