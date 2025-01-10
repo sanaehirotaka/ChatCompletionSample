@@ -1,5 +1,7 @@
 ﻿using ChatCompletion.Lib.Injection;
 using ChatCompletion.Lib.Options;
+using ChatCompletion.Plugins;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Google;
 using static ChatCompletion.Lib.Options.ClientOptions;
