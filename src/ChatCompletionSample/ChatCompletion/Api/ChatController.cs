@@ -88,20 +88,23 @@ public class ChatController : ControllerBase
         var kernel = chatCompletion.CreateKernel(usingModel.ModelName);
         var setting = chatCompletion.GetPromptExecutionSettings();
 
-        kernel.Plugins.Add(KernelPluginFactory.CreateFromType<GenerateTitlePlugin>());
+        var plugin = new GenerateTitlePlugin();
+        kernel.Plugins.Add(KernelPluginFactory.CreateFromObject(plugin));
         var chat = kernel.GetRequiredService<IChatCompletionService>();
         Exception? exception = null;
         for (var i = 0; i < 3; i++)
         {
             var history = chatMessages.ToChatHistory();
-            history.AddUserMessage("このやり取りからタイトルとして適切な2-5単語の簡潔な説明を1つだけ書いてください");
+            history.AddUserMessage("今までの会話からタイトルとして適切な簡潔な説明を1つだけ書いてPutTitle関数に渡してください");
             try
             {
                 var completion = await chat.GetChatMessageContentsAsync(history, setting, kernel);
                 history.AddRange(completion);
-                var title = history.LastOrDefault(p => p.Role == AuthorRole.Tool)?.Content?.Trim();
-                var content = completion[completion.Count - 1].Content?.Trim() ?? "";
-                return new List<string?>([title, content[..Math.Min(20, content.Length)]]);
+                if (string.IsNullOrEmpty(plugin.Title))
+                {
+                    await chat.GetChatMessageContentsAsync(history, setting, kernel);
+                }
+                return new List<string?>([plugin.Title]);
             }
             catch (Exception ex)
             {

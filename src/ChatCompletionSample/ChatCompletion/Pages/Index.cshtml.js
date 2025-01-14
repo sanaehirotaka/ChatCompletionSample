@@ -123,7 +123,7 @@ function layout(data, showLatestUserPrompt = false) {
     // 最後がユーザープロンプトならテキストボックスに設定
     if (!showLatestUserPrompt && messages.length > 0 && messages[messages.length - 1].type == MessageType.user) {
         const newPrompt = messages.pop();
-        document.querySelector("#newPrompt").value = newPrompt.message;
+        document.querySelector("#newPrompt").textContent = newPrompt.message;
     }
     const elements = [...document.querySelector("#messages").children];
     const elementVersion = elements.map(e => `${e.getAttribute("id")}${e.getAttribute("data-ver")}`);
@@ -269,7 +269,7 @@ $("#send").click(async e => {
         // プロンプトを準備
         const newPrompts = [
             // テキスト入力
-            document.querySelector("#newPrompt").value.trim(),
+            document.querySelector("#newPrompt").textContent.trim(),
             // ファイル
             ...[...document.querySelectorAll("#addedFiles > li")].map(e => {
                 return `
@@ -287,7 +287,7 @@ ${e.querySelector(".file-body").getAttribute("data-md")}
             return;
         }
         // プロンプトを削除
-        document.querySelector("#newPrompt").value = "";
+        document.querySelector("#newPrompt").textContent = "";
         // ファイルを削除
         document.querySelector("#addedFiles").replaceChildren();
         document.querySelector("#addedImages").replaceChildren();
@@ -517,6 +517,12 @@ postArea.addEventListener('drop', async ev => {
     for (const item of ev.dataTransfer?.items ?? []) {
         if (item.kind == "file") {
             await addFile(item.getAsFile());
+        }
+        if (item.kind == "string" && item.type == "text/plain") {
+            item.getAsString(str => {
+                document.querySelector("#newPrompt").textContent += str;
+                document.querySelector("#newPrompt").focus();
+            });
         }
     }
 });
