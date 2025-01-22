@@ -67,7 +67,7 @@ public class GCSMemoryService : IMemoryService
     /// <param name="threadId"></param>
     private async Task RemoveHeaderEntry(string threadId)
     {
-        _header ??= await LoadOrCreateHeader(); // ヘッダーが未ロードの場合はロードする
+        _header = await LoadOrCreateHeader(); // ヘッダーが未ロードの場合はロードする
         _header.Remove(threadId); // ヘッダーからエントリを削除
         await WriteHeaderAsync(); // ヘッダーを書き込む
     }
@@ -141,7 +141,7 @@ public class GCSMemoryService : IMemoryService
     /// <returns>ヘッダー情報の辞書</returns>
     private async Task<Dictionary<string, MemoryModel>> LoadOrCreateHeader()
     {
-        return _header ?? await LoadHeaderAsync() ?? await CreateHeaderAsync();
+        return await LoadHeaderAsync() ?? await CreateHeaderAsync();
     }
 
     /// <summary>
@@ -198,7 +198,7 @@ public class GCSMemoryService : IMemoryService
     /// <param name="model">更新に使用する MemoryModel オブジェクト</param>
     private async Task UpdateHeaderAsync(MemoryModel model)
     {
-        _header ??= await LoadOrCreateHeader();
+        _header = await LoadOrCreateHeader();
         if (!_header!.TryGetValue(model.ThreadId, out var existingModel) || existingModel.Title != model.Title)
         {
             _header[model.ThreadId] = new()
