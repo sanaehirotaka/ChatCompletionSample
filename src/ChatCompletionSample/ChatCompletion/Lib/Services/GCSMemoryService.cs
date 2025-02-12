@@ -29,7 +29,15 @@ public class GCSMemoryService : IMemoryService
 
     private readonly GCSOptions _options; // GCS の設定オプション
     private readonly StorageClient _client; // GCS クライアント
-    private Dictionary<string, MemoryModel>? _header; // メモリモデルのヘッダー情報をキャッシュする辞書
+    private Dictionary<string, MemoryModel>? _headerCache; // メモリモデルのヘッダー情報をキャッシュする辞書
+
+    private Dictionary<string, MemoryModel> Header
+    {
+        get
+        {
+            return _headerCache ??= LoadOrCreateHeader().Result;
+        }
+    }
 
     // ヘッダーファイルのパスを取得するプロパティ
     private string HeaderFile => GetObjectPath(HeaderFileName);
@@ -67,8 +75,7 @@ public class GCSMemoryService : IMemoryService
     /// <param name="threadId"></param>
     private async Task RemoveHeaderEntry(string threadId)
     {
-        _header ??= await LoadOrCreateHeader(); // ヘッダーが未ロードの場合はロードする
-        _header.Remove(threadId); // ヘッダーからエントリを削除
+        Header.Remove(threadId); // ヘッダーからエントリを削除
         await WriteHeaderAsync(); // ヘッダーを書き込む
     }
 
@@ -94,19 +101,10 @@ public class GCSMemoryService : IMemoryService
     /// <returns>MemoryModel オブジェクトの非同期列挙子</returns>
     public async IAsyncEnumerable<MemoryModel> ListAsync()
     {
-        _header ??= await LoadOrCreateHeader(); // ヘッダーが未ロードの場合はロード
-        foreach (var model in _header!.Values.OrderByDescending(v => v.ThreadId)) // ヘッダーに含まれるすべてのメモリモデルを返す
+        foreach (var model in Header!.Values.OrderByDescending(v => v.ThreadId)) // ヘッダーに含まれるすべてのメモリモデルを返す
         {
             yield return model;
         }
-    }
-
-    /// <summary>
-    /// キャッシュされているヘッダー情報をリロードする
-    /// </summary>
-    public async Task ReloadHeaderAsync()
-    {
-        _header = await LoadHeaderAsync(); // ヘッダーをGCSからロード
     }
 
     /// <summary>
@@ -198,10 +196,9 @@ public class GCSMemoryService : IMemoryService
     /// <param name="model">更新に使用する MemoryModel オブジェクト</param>
     private async Task UpdateHeaderAsync(MemoryModel model)
     {
-        _header ??= await LoadOrCreateHeader();
-        if (!_header!.TryGetValue(model.ThreadId, out var existingModel) || existingModel.Title != model.Title)
+        if (!Header!.TryGetValue(model.ThreadId, out var existingModel) || existingModel.Title != model.Title)
         {
-            _header[model.ThreadId] = new()
+            Header[model.ThreadId] = new()
             {
                 ThreadId = model.ThreadId,
                 Title = model.Title,
@@ -216,7 +213,7 @@ public class GCSMemoryService : IMemoryService
     /// <param name="header">書き込むヘッダー情報の辞書。省略した場合は、現在のキャッシュされたヘッダーが書き込まれる</param>
     private async Task WriteHeaderAsync(IDictionary<string, MemoryModel>? header = null)
     {
-        header ??= _header ?? await CreateHeaderAsync(); // 引数が null の場合は、キャッシュされたヘッダーを使用
+        header ??= Header; // 引数が null の場合は、キャッシュされたヘッダーを使用
         using var stream = new MemoryStream();
         using (var gzStream = new GZipStream(stream, CompressionMode.Compress, true))
         {
