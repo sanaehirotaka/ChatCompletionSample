@@ -177,3 +177,26 @@ function random() {
 function newId(prefix = "") {
     return prefix + random()
 }
+
+class HealthCheck {
+
+    #lastCheck;
+    #checkSpan = 1000 * 60 * 5;
+
+    constructor() {
+        this.#lastCheck = new Date().getTime();
+    }
+
+    async checkRequest() {
+        if ((this.#lastCheck + this.#checkSpan) < new Date().getTime()) {
+            const p = fetch("/Health");
+            this.#lastCheck = new Date().getTime();
+            await p;
+        }
+    }
+}
+
+const healthCheck = new HealthCheck();
+
+document.addEventListener("input", healthCheck.checkRequest.bind(healthCheck));
+document.addEventListener("mousemove", healthCheck.checkRequest.bind(healthCheck));

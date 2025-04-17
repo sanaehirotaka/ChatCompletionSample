@@ -1,4 +1,5 @@
 using ChatCompletion.Lib.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}");
+app.MapGet("/Health", () => HealthCheckResult.Healthy());
 
 if (app.Environment.IsDevelopment())
 {
