@@ -1,10 +1,10 @@
 ﻿using ChatCompletion.Lib.Injection;
-using ChatCompletion.SemanticKernelLib.Options;
+using ChatCompletion.Lib.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Google;
-using static ChatCompletion.SemanticKernelLib.Options.ClientOptions;
+using static ChatCompletion.Lib.Options.ClientOptions;
 
-namespace ChatCompletion.SemanticKernelLib.Services;
+namespace ChatCompletion.Lib.Services;
 
 [Singleton]
 public class GeminiKernel : IChatCompletionConnector
@@ -29,10 +29,21 @@ public class GeminiKernel : IChatCompletionConnector
 
     public Kernel CreateKernel(string model)
     {
+        if (string.IsNullOrEmpty(ClientOption.CredentialEnvironmentVariable))
+        {
+            throw new ArgumentException($"ClientOption.CredentialEnvironmentVariable is not set");
+        }
+
+        var credential = Environment.GetEnvironmentVariable(ClientOption.CredentialEnvironmentVariable);
+        if (string.IsNullOrEmpty(credential))
+        {
+            throw new ArgumentException($"Env({ClientOption.CredentialEnvironmentVariable}) is not set");
+        }
+
 #pragma warning disable SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
-        return Kernel.CreateBuilder()
-            .AddGoogleAIGeminiChatCompletion(model, ClientOption.Credential)
-            .Build();
+        var builder = Kernel.CreateBuilder()
+            .AddGoogleAIGeminiChatCompletion(model, credential);
+        return builder.Build();
 #pragma warning restore SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
     }
 
@@ -57,6 +68,7 @@ public class GeminiKernel : IChatCompletionConnector
         }
         return new GeminiPromptExecutionSettings()
         {
+            ToolCallBehavior = GeminiToolCallBehavior.AutoInvokeKernelFunctions,
             SafetySettings = [
                 // ハラスメント
                 new(GeminiSafetyCategory.Harassment, threshold),

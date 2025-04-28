@@ -1,7 +1,7 @@
-﻿using ChatCompletion.Plugins;
-using ChatCompletion.SemanticKernelLib.Extensions;
-using ChatCompletion.SemanticKernelLib.Model;
-using ChatCompletion.SemanticKernelLib.Services;
+﻿using ChatCompletion.Lib.Extensions;
+using ChatCompletion.Lib.Model;
+using ChatCompletion.Lib.Services;
+using ChatCompletion.Plugins;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -15,11 +15,11 @@ namespace ChatCompletion.Api;
 [Produces("application/json")]
 public class ChatController : ControllerBase
 {
-    private readonly MemoryService memoryService;
+    private readonly IMemoryService memoryService;
 
     private readonly IList<IChatCompletionConnector> chatCompletionConnectors;
 
-    public ChatController(MemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
+    public ChatController(LocalStorageMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
     {
         this.memoryService = memoryService;
         this.chatCompletionConnectors = chatCompletionConnectors.ToList();
@@ -37,38 +37,43 @@ public class ChatController : ControllerBase
         var kernel = chatCompletion.CreateKernel(usingModel.ModelName);
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
         var setting = chatCompletion.GetPromptExecutionSettings();
-        var history = chatMessages.ToChatHistory();
-        try
+        Exception? exception = null;
+        for (var i = 0; i < 3; i++)
         {
-            var completions = new ChatHistory();
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
-            // FinishReason == stop になるまで繰り返す
-            while (!completions.Any(m => "stop" == m?.Metadata?["FinishReason"]?.ToString()?.ToLower()))
+            var history = chatMessages.ToChatHistory();
+            try
             {
-                var completion = await chatCompletionService.GetChatMessageContentsAsync(history, setting);
-                history.AddRange(completion);
-                completions.AddRange(completion);
+                var completions = new ChatHistory();
+                Stopwatch stopwatch = new();
+                stopwatch.Start();
+                // FinishReason == stop になるまで繰り返す
+                while (!completions.Any(m => "stop" == m?.Metadata?["FinishReason"]?.ToString()?.ToLower()))
+                {
+                    var completion = await chatCompletionService.GetChatMessageContentsAsync(history, setting, kernel);
+                    history.AddRange(completion);
+                    completions.AddRange(completion);
+                }
+                stopwatch.Stop();
+                int mills = (int)stopwatch.Elapsed.TotalMilliseconds;
+
+                chatMessages.Messages.Add(new()
+                {
+                    Model = usingModel.ToString(),
+                    Id = "assistant-" + Math.Abs(Random.Shared.Next()).ToString(),
+                    Version = Math.Abs(Random.Shared.Next()),
+                    Type = MemoryModel.MessageType.Assistant,
+                    Message = string.Join("", completions.Select(m => m.Content ?? "")),
+                    ResponseTimeMills = mills
+                });
+                return chatMessages;
             }
-            stopwatch.Stop();
-            int mills = (int)stopwatch.Elapsed.TotalMilliseconds;
-
-            chatMessages.Messages.Add(new()
+            catch (Exception ex)
             {
-                Model = usingModel.ToString(),
-                Id = "assistant-" + Math.Abs(Random.Shared.Next()).ToString(),
-                Version = Math.Abs(Random.Shared.Next()),
-                Type = MemoryModel.MessageType.Assistant,
-                Message = string.Join("", completions.Select(m => m.Content ?? "")),
-                ResponseTimeMills = mills
-            });
-
-            return chatMessages;
+                exception = ex;
+            }
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        return Problem(exception!.ToString());
     }
 
     /// <summary>
@@ -81,26 +86,33 @@ public class ChatController : ControllerBase
     {
         var (usingModel, chatCompletion) = DetectUsingModel(chatMessages);
         var kernel = chatCompletion.CreateKernel(usingModel.ModelName);
+        var setting = chatCompletion.GetPromptExecutionSettings();
 
-        kernel.Plugins.AddFromType<GenerateTitlePlugin>();
+        var plugin = new GenerateTitlePlugin();
+        kernel.Plugins.Add(KernelPluginFactory.CreateFromObject(plugin));
         var chat = kernel.GetRequiredService<IChatCompletionService>();
-        var history = chatMessages.ToChatHistory();
-        history.AddUserMessage("このやり取りからタイトルとして適切な2-5単語の簡潔な説明を1つだけ書いてください");
-        try
+        Exception? exception = null;
+        for (var i = 0; i < 3; i++)
         {
-            var completion = await chat.GetChatMessageContentsAsync(history, new PromptExecutionSettings()
+            var history = chatMessages.ToChatHistory();
+            history.AddUserMessage("今までの会話からタイトルとして適切な簡潔な説明を1つだけ書いてPutTitle関数に渡してください");
+            try
             {
-                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-            }, kernel);
-            history.AddRange(completion);
-            var title = history.LastOrDefault(p => p.Role == AuthorRole.Tool)?.Content?.Trim();
-            var content = completion[completion.Count - 1].Content?.Trim() ?? "";
-            return new List<string?>([title, content[..Math.Min(20, content.Length)]]);
+                var completion = await chat.GetChatMessageContentsAsync(history, setting, kernel);
+                history.AddRange(completion);
+                if (string.IsNullOrEmpty(plugin.Title))
+                {
+                    await chat.GetChatMessageContentsAsync(history, setting, kernel);
+                }
+                return new List<string?>([plugin.Title]);
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message);
-        }
+        return Problem(exception!.ToString());
     }
 
     /// <summary>

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace ChatCompletion.SemanticKernelLib.Model;
+namespace ChatCompletion.Lib.Model;
 
 public class MemoryModel
 {
@@ -35,7 +35,7 @@ public class MemoryModel
     {
         public InlineDataType Type { get; set; }
 
-        public string Uri { get; set; }
+        public required string Uri { get; set; }
     }
 
     public enum MessageType
@@ -50,7 +50,7 @@ public class MemoryModel
         Image = 1
     }
 
-    private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions jsonSerializerOptions = new()
     {
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
     };

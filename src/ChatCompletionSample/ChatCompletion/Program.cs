@@ -1,4 +1,5 @@
-using ChatCompletion.SemanticKernelLib.Extensions;
+using ChatCompletion.Lib.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}");
+app.MapGet("/Health", () => HealthCheckResult.Healthy());
 
 if (app.Environment.IsDevelopment())
 {
@@ -35,4 +37,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT");
+string? url = null;
+if (port != null)
+{
+    url = $"http://0.0.0.0:{port}";
+}
+app.Run(url);

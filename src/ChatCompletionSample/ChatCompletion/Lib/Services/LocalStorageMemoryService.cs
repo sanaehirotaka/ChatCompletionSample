@@ -1,16 +1,16 @@
 ﻿using ChatCompletion.Lib.Injection;
-using ChatCompletion.SemanticKernelLib.Model;
-using ChatCompletion.SemanticKernelLib.Options;
+using ChatCompletion.Lib.Model;
+using ChatCompletion.Lib.Options;
 using System.IO.Compression;
 
-namespace ChatCompletion.SemanticKernelLib.Services;
+namespace ChatCompletion.Lib.Services;
 
 [Singleton]
-public class MemoryService
+public class LocalStorageMemoryService : IMemoryService
 {
-    private readonly StorageOptions storageOptions;
+    private readonly LocalStorageOptions storageOptions;
 
-    public MemoryService(StorageOptions storageOptions)
+    public LocalStorageMemoryService(LocalStorageOptions storageOptions)
     {
         this.storageOptions = storageOptions;
     }
@@ -33,7 +33,7 @@ public class MemoryService
         }
     }
 
-    public async ValueTask<MemoryModel?> GetAsync(string threadId)
+    public async Task<MemoryModel?> GetAsync(string threadId)
     {
         var file = GetLocation(threadId);
         if (!file.Exists)
@@ -55,10 +55,13 @@ public class MemoryService
         await MemoryModel.Serialize(model, stream);
     }
 
-    public void Delete(string threadId)
+    public async Task Delete(string threadId)
     {
-        var file = GetLocation(threadId);
-        file.Delete();
+        await Task.Run(() =>
+        {
+            var file = GetLocation(threadId);
+            file.Delete();
+        });
     }
 
     private FileInfo GetLocation(string threadId)

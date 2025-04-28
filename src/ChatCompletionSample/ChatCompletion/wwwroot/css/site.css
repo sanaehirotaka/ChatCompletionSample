@@ -147,3 +147,9 @@ code.hljs {
     height: 100%;
     pointer-events: none;
 }
+
+#newPrompt {
+    min-height: 4rem;
+    max-height: calc(100vh - 15rem);
+    overflow: auto;
+}

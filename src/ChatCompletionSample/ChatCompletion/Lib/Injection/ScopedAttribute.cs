@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace ChatCompletion.Lib.Injection;
+﻿namespace ChatCompletion.Lib.Injection;
 
 public class ScopedAttribute : InjectionTargetsAttribute
 {

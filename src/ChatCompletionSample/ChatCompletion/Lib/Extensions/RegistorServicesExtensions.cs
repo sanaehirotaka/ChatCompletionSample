@@ -1,7 +1,4 @@
-﻿using ChatCompletion.Lib.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace ChatCompletion.SemanticKernelLib.Extensions;
+﻿namespace ChatCompletion.Lib.Extensions;
 
 public static class RegistorServicesExtensions
 {
