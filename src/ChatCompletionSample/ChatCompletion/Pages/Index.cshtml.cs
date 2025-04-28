@@ -18,7 +18,7 @@ public class IndexModel : PageModel
 
     public MemoryModel Chat { get; private set; } = default!;
 
-    public IndexModel(GCSMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
+    public IndexModel(LocalStorageMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
     {
         this.memoryService = memoryService;
         this.chatCompletionConnectors = chatCompletionConnectors.ToList();

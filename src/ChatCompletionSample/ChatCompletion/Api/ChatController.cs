@@ -19,7 +19,7 @@ public class ChatController : ControllerBase
 
     private readonly IList<IChatCompletionConnector> chatCompletionConnectors;
 
-    public ChatController(GCSMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
+    public ChatController(LocalStorageMemoryService memoryService, IEnumerable<IChatCompletionConnector> chatCompletionConnectors)
     {
         this.memoryService = memoryService;
         this.chatCompletionConnectors = chatCompletionConnectors.ToList();

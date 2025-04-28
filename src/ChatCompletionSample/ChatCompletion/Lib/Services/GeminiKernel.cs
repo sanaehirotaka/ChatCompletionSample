@@ -1,7 +1,5 @@
 ﻿using ChatCompletion.Lib.Injection;
 using ChatCompletion.Lib.Options;
-using ChatCompletion.Plugins;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Google;
 using static ChatCompletion.Lib.Options.ClientOptions;
@@ -31,9 +29,20 @@ public class GeminiKernel : IChatCompletionConnector
 
     public Kernel CreateKernel(string model)
     {
+        if (string.IsNullOrEmpty(ClientOption.CredentialEnvironmentVariable))
+        {
+            throw new ArgumentException($"ClientOption.CredentialEnvironmentVariable is not set");
+        }
+
+        var credential = Environment.GetEnvironmentVariable(ClientOption.CredentialEnvironmentVariable);
+        if (string.IsNullOrEmpty(credential))
+        {
+            throw new ArgumentException($"Env({ClientOption.CredentialEnvironmentVariable}) is not set");
+        }
+
 #pragma warning disable SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
         var builder = Kernel.CreateBuilder()
-            .AddGoogleAIGeminiChatCompletion(model, ClientOption.Credential);
+            .AddGoogleAIGeminiChatCompletion(model, credential);
         return builder.Build();
 #pragma warning restore SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
     }

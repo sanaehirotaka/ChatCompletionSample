@@ -11,5 +11,5 @@ public class ClientOptions : List<ClientOption>
         AddRange(configuration.GetSection(nameof(ClientOptions)).Get<List<ClientOption>>()!);
     }
 
-    public record ClientOption(string KernelType, string SafetyThreshold, string[] Models, string Credential);
+    public record ClientOption(string KernelType, string SafetyThreshold, string[] Models, string CredentialEnvironmentVariable);
 }
