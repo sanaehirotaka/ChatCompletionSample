@@ -76,7 +76,7 @@ public class GeminiKernel : IChatCompletionConnector
                 new(GeminiSafetyCategory.DangerousContent, threshold),
                 // 性的描写
                 new(GeminiSafetyCategory.SexuallyExplicit, threshold),
-            ]
+            ],
         };
 #pragma warning restore SKEXP0070 // 種類は、評価の目的でのみ提供されています。将来の更新で変更または削除されることがあります。続行するには、この診断を非表示にします。
     }
